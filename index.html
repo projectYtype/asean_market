@@ -64,7 +64,7 @@
     const { useState, useEffect } = React;
 
     const Button = ({ children, onClick, variant = 'primary', type = 'button', className = '', disabled = false }) => {
-      const baseStyle = "inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold transition-all duration-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-center";
+      const baseStyle = "inline-flex items-center justify-center px-5 py-2.5 text-sm font-semibold transition-all duration-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed text-center whitespace-nowrap";
       const variants = {
         primary: "bg-[#FDB827] text-gray-900 hover:bg-[#e5a620] hover:shadow-lg hover:-translate-y-0.5 focus:ring-[#FDB827]",
         secondary: "bg-gray-900 text-white hover:bg-gray-800 hover:shadow-lg hover:-translate-y-0.5 focus:ring-gray-900",
@@ -255,7 +255,7 @@
       };
 
       return (
-        <div className="min-h-screen flex relative bg-white overflow-hidden">
+        <div className="min-h-screen flex relative bg-white overflow-hidden animate-fade-in">
           <div 
             className="absolute inset-0 z-0 bg-no-repeat bg-top lg:bg-left"
             style={{ 
@@ -712,47 +712,45 @@
             <div className="animate-slide-up">
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
                 {buyers.map(b => {
-  const myMtg = meetings.find(m => m.companyId === sessionData.id && m.buyerId === b.id);
-  return (
-    // Card의 클래스 중 overflow-visible을 overflow-hidden으로 변경하여 로고가 카드 모서리에 맞게 둥글게 처리되도록 합니다.
-    <Card key={b.id} hover onClick={() => setSelectedBuyerId(b.id)} className="flex flex-col overflow-hidden group">
-      
-      {/* 👇 새로 추가된 바이어 로고 영역 👇 */}
-      <div className="h-32 sm:h-40 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 p-4 sm:p-6 relative">
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
-        <DriveImage 
-          url={b.logoUrl} 
-          alt="Buyer Logo" 
-          className="object-contain h-full w-full mix-blend-multiply" 
-          fallbackText="No Logo" 
-        />
-      </div>
-      {/* 👆 새로 추가된 바이어 로고 영역 👆 */}
+                  const myMtg = meetings.find(m => m.companyId === sessionData.id && m.buyerId === b.id);
+                  return (
+                    <Card key={b.id} hover onClick={() => setSelectedBuyerId(b.id)} className="flex flex-col overflow-hidden group">
+                      
+                      {/* 바이어 로고 영역 */}
+                      <div className="h-32 sm:h-40 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 p-4 sm:p-6 relative">
+                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                        <DriveImage 
+                          url={b.logoUrl} 
+                          alt="Buyer Logo" 
+                          className="object-contain h-full w-full mix-blend-multiply" 
+                          fallbackText="No Logo" 
+                        />
+                      </div>
 
-      <div className="p-5 sm:p-6 flex-grow">
-        <div className="flex justify-between items-start mb-4">
-          <h3 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">{b.companyName}</h3>
-          {myMtg && <div className="ml-3 flex-shrink-0"><Badge status={myMtg.status} /></div>}
-        </div>
-        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-4 bg-gray-50 inline-block px-2.5 py-1 rounded-md border border-gray-100">{b.businessType || '비즈니스 유형 미입력'}</p>
-        <div className="text-sm text-gray-600 space-y-1">
-          <p className="line-clamp-2"><span className="font-semibold text-gray-900">관심 카테고리:</span> {b.targetCategories || '미입력'}</p>
-          <p><span className="font-semibold text-gray-900">국가:</span> {b.country || '미입력'}</p>
-        </div>
-      </div>
-      
-      <div className="p-4 bg-gray-50 border-t border-gray-100 flex flex-col gap-2">
-        {!myMtg ? (
-          <Button onClick={(e) => { e.stopPropagation(); handleRequestMeetingWithBuyer(b.id); }} className="w-full relative z-10 shadow-sm">🗓️ 미팅 신청하기</Button>
-        ) : (
-          <div className="text-center py-2 text-xs font-semibold text-gray-500 bg-gray-200/50 rounded-lg">
-            {myMtg.requestedBy === 'company' ? '내가 신청한 미팅입니다.' : '바이어가 신청한 미팅입니다.'}
-          </div>
-        )}
-      </div>
-    </Card>
-  );
-})}
+                      <div className="p-5 sm:p-6 flex-grow">
+                        <div className="flex justify-between items-start mb-4">
+                          <h3 className="text-lg sm:text-xl font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">{b.companyName}</h3>
+                          {myMtg && <div className="ml-3 flex-shrink-0"><Badge status={myMtg.status} /></div>}
+                        </div>
+                        <p className="text-xs sm:text-sm font-medium text-gray-500 mb-4 bg-gray-50 inline-block px-2.5 py-1 rounded-md border border-gray-100">{b.businessType || '비즈니스 유형 미입력'}</p>
+                        <div className="text-sm text-gray-600 space-y-1">
+                          <p className="line-clamp-2"><span className="font-semibold text-gray-900">관심 카테고리:</span> {b.targetCategories || '미입력'}</p>
+                          <p><span className="font-semibold text-gray-900">국가:</span> {b.country || '미입력'}</p>
+                        </div>
+                      </div>
+                      
+                      <div className="p-4 bg-gray-50 border-t border-gray-100 flex flex-col gap-2">
+                        {!myMtg ? (
+                          <Button onClick={(e) => { e.stopPropagation(); handleRequestMeetingWithBuyer(b.id); }} className="w-full relative z-10 shadow-sm">🗓️ 미팅 신청하기</Button>
+                        ) : (
+                          <div className="text-center py-2 text-xs font-semibold text-gray-500 bg-gray-200/50 rounded-lg">
+                            {myMtg.requestedBy === 'company' ? '내가 신청한 미팅입니다.' : '바이어가 신청한 미팅입니다.'}
+                          </div>
+                        )}
+                      </div>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
           )}
@@ -808,7 +806,7 @@
                      </div>
                   </div>
 
-                  {/* 비즈니스 유형 (따로 분리됨) */}
+                  {/* 비즈니스 유형 */}
                   <div className="bg-indigo-50/50 border border-indigo-100 p-5 sm:p-6 rounded-3xl shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                      <h4 className="font-black text-indigo-900 text-lg flex items-center">
                         <span className="text-indigo-500 mr-2 text-xl">🏢</span> 비즈니스 유형
@@ -982,7 +980,7 @@
                   <tbody className="divide-y divide-gray-100">
                     {myIncomingRequests.length === 0 && <tr><td colSpan="3" className="px-6 py-16 text-center text-gray-400 font-medium">No active pitches from companies.</td></tr>}
                     {myIncomingRequests.map(m => {
-                      const comp = companies.find(c => c.id === m.companyId);
+                      const comp = companies.find(c => m.companyId === m.companyId);
                       return (
                         <tr key={m.id} className="hover:bg-gray-50 transition-colors">
                           <td className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">
@@ -1170,7 +1168,7 @@
                     </div>
                   </div>
                   <p className="text-xs text-gray-400 mt-4 leading-tight">*Note: Business meetings held at the venue.</p> 
-                 <p className="text-xs text-gray-400 mt-4 leading-tight font-bold">Please note that accommodation and transportation are not provided.</p>
+                  <p className="text-xs text-gray-400 mt-4 leading-tight font-bold">Please note that accommodation and transportation are not provided.</p>
                </div>
             </div>
 
@@ -1212,6 +1210,112 @@
               ))}
             </div>
           </div>
+
+          {/* 게스트용 기업 상세 프로필 모달 */}
+          <Modal isOpen={!!selectedCompany} onClose={() => setSelectedCompany(null)} title="Brand Profile">
+            {selectedCompany && (
+              <div className="space-y-6 sm:space-y-8 pb-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm relative overflow-hidden">
+                   <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-[#FDB827]/10 rounded-bl-full -z-10"></div>
+                   <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center p-3 sm:p-4 flex-shrink-0 z-10">
+                      {selectedCompany.logoUrl ? (
+                         <a href={selectedCompany.logoUrl} target="_blank" rel="noreferrer" className="w-full h-full block flex items-center justify-center" title="원본 로고 파일 열기">
+                            <DriveImage url={selectedCompany.logoUrl} alt="logo" className="object-contain w-full h-full" fallbackText="Logo" />
+                         </a>
+                      ) : <span className="text-gray-300 text-[10px] sm:text-xs uppercase font-bold tracking-widest text-center">No Logo</span>}
+                   </div>
+                   <div className="text-center sm:text-left z-10 flex-grow w-full">
+                      <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-md mb-2 sm:mb-3">{selectedCompany.country || "Korea"}</span>
+                      <h2 className="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 tracking-tight">{selectedCompany.brandEn}</h2>
+                      <p className="text-sm sm:text-lg text-gray-500 font-medium">{selectedCompany.nameEn}</p>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                      <p className="font-bold text-[10px] text-gray-500 uppercase tracking-wider mb-1">Business Area</p>
+                      <p className="font-bold text-gray-900 text-sm">{selectedCompany.businessArea || "-"}</p>
+                   </div>
+                   <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                      <p className="font-bold text-[10px] text-gray-500 uppercase tracking-wider mb-1">Website</p>
+                      <a href={selectedCompany.website} target="_blank" rel="noreferrer" className="font-bold text-blue-600 hover:underline text-sm break-all">{selectedCompany.website || "-"}</a>
+                   </div>
+                </div>
+
+                <div>
+                  <h4 className="font-extrabold text-gray-900 text-lg sm:text-xl mb-3 flex items-center"><span className="text-[#FDB827] mr-2">|</span> Brand Intro & Overview</h4>
+                  <div className="bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100 text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">{selectedCompany.introEn || "-"}</div>
+                </div>
+
+                <div>
+                  <h4 className="font-extrabold text-gray-900 text-lg sm:text-xl mb-3 flex items-center"><span className="text-[#FDB827] mr-2">|</span> Competitiveness</h4>
+                  <div className="bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100 text-sm sm:text-base text-gray-700 leading-relaxed whitespace-pre-wrap font-medium">{selectedCompany.competitiveness || "-"}</div>
+                </div>
+
+                <VideoPlayer url={selectedCompany.youtubeUrl} />
+
+                <div>
+                   <h4 className="font-extrabold text-gray-900 text-lg sm:text-xl mb-3 flex items-center"><span className="text-[#FDB827] mr-2">|</span> Products & Capacity</h4>
+                   <div className="bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100">
+                      <p className="font-bold text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-2">Pricing & MOQ details</p>
+                      <p className="text-sm sm:text-base text-gray-900 font-semibold whitespace-pre-wrap leading-relaxed">{selectedCompany.products || selectedCompany.moq || "-"}</p>
+                   </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                   <div className="bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100">
+                      <p className="font-bold text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-2">Export Status</p>
+                      <p className="text-sm sm:text-base text-gray-900 font-semibold">{selectedCompany.exportStatus || "-"}</p>
+                   </div>
+                   <div className="bg-gray-50 p-4 sm:p-6 rounded-2xl border border-gray-100">
+                      <p className="font-bold text-[10px] sm:text-xs text-gray-500 uppercase tracking-wider mb-2">Target Buyer</p>
+                      <p className="text-sm sm:text-base text-gray-900 font-semibold">{selectedCompany.targetBuyer || "-"}</p>
+                   </div>
+                </div>
+
+                {(() => {
+                  const images = [selectedCompany.productImage1, selectedCompany.productImage2, selectedCompany.productImage3, selectedCompany.productImage4, selectedCompany.productImage5].filter(Boolean);
+                  if (images.length === 0) return null;
+                  return (
+                    <div>
+                      <h4 className="font-extrabold text-gray-900 text-lg sm:text-xl mb-3 flex items-center"><span className="text-[#FDB827] mr-2">|</span> Product Gallery</h4>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                         {images.map((img, idx) => (
+                            <a href={img} target="_blank" rel="noreferrer" key={idx} className="aspect-square bg-gray-50 rounded-xl border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow relative block group cursor-pointer">
+                               <DriveImage 
+                                  url={img} 
+                                  alt={`Product ${idx+1}`} 
+                                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" 
+                                  fallbackText="Click to View Image"
+                               />
+                               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
+                                  <svg className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 drop-shadow-lg" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                               </div>
+                            </a>
+                         ))}
+                      </div>
+                    </div>
+                  );
+                })()}
+
+                {selectedCompany.productImagesLink && (
+                   <a href={selectedCompany.productImagesLink} target="_blank" rel="noreferrer" 
+                      className="block bg-blue-50/50 hover:bg-blue-50 border border-blue-100 p-4 sm:p-6 rounded-2xl text-center transition-all group shadow-sm mt-4">
+                      <p className="text-blue-700 font-extrabold text-sm sm:text-lg flex flex-col sm:flex-row items-center justify-center gap-2">
+                        <svg className="w-5 h-5 sm:w-6 sm:h-6 transform group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span className="text-center">Download / View Product Catalog</span>
+                      </p>
+                   </a>
+                )}
+                
+                <div className="bg-gray-100 text-gray-600 p-3 sm:p-4 rounded-xl text-xs sm:text-sm text-center font-semibold flex flex-col sm:flex-row items-center justify-center gap-2">
+                  <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                  Direct contact info is hidden for platform security.
+                </div>
+              </div>
+            )}
+          </Modal>
+
         </div>
       );
     };
@@ -1220,21 +1324,24 @@
       <div className="min-h-screen bg-gray-50/50 flex flex-col font-sans selection:bg-[#FDB827] selection:text-black">
         <nav className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm backdrop-blur-md bg-white/90">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-14 sm:h-20 items-center">
-              <div className="flex items-center space-x-2 sm:space-x-4">
+            <div className="flex justify-between h-14 sm:h-20 items-center gap-4">
+              {/* Left Logo + Title */}
+              <div className="flex items-center space-x-2 sm:space-x-4 min-w-0 flex-shrink">
                  <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#FDB827] rounded-lg sm:rounded-xl flex items-center justify-center font-black text-gray-900 shadow-md flex-shrink-0 text-sm sm:text-base">A</div>
-                 <span className="text-lg sm:text-2xl font-extrabold tracking-tight text-gray-900 truncate max-w-[160px] sm:max-w-none">ASEAN Korea Beauty Trade Show</span>
+                 <span className="hidden sm:inline text-lg sm:text-2xl font-extrabold tracking-tight text-gray-900 truncate">ASEAN Korea Beauty Trade Show</span>
+                 <span className="inline sm:hidden text-sm font-extrabold tracking-tight text-gray-900 truncate">AK Beauty Show</span>
               </div>
-              <div className="flex items-center space-x-2 sm:space-x-6">
+              {/* Right Action Buttons */}
+              <div className="flex items-center space-x-2 sm:space-x-4 flex-shrink-0">
                  {sessionRole === 'guest' && (
-                   <a href="https://forms.gle/4mxgkCsDCQoozqNN8" target="_blank" rel="noreferrer" className="hidden sm:inline-flex items-center justify-center px-4 py-2 text-sm font-bold bg-[#FDB827] text-gray-900 rounded-lg hover:bg-amber-400 hover:shadow-md transition-all">
+                   <a href="https://forms.gle/4mxgkCsDCQoozqNN8" target="_blank" rel="noreferrer" className="hidden md:inline-flex items-center justify-center px-4 py-2 text-sm font-bold bg-[#FDB827] text-gray-900 rounded-lg hover:bg-amber-400 hover:shadow-md transition-all whitespace-nowrap">
                       SIGN UP NOW
                    </a>
                  )}
-                 <span className="hidden sm:inline-block text-xs font-bold px-3 py-1.5 bg-gray-100 rounded-lg text-gray-600 uppercase tracking-widest border border-gray-200">
+                 <span className="hidden sm:inline-block text-xs font-bold px-3 py-1.5 bg-gray-100 rounded-lg text-gray-600 uppercase tracking-widest border border-gray-200 whitespace-nowrap">
                    {sessionRole === 'company' ? '기업 계정' : `Role: ${sessionRole}`}
                  </span>
-                 <Button variant="ghost" onClick={() => { setSessionRole(null); setSessionData(null); }} className="text-xs sm:text-sm border border-gray-200 bg-white px-3 py-1.5 sm:px-5 sm:py-2.5">
+                 <Button variant="ghost" onClick={() => { setSessionRole(null); setSessionData(null); }} className="text-xs sm:text-sm border border-gray-200 bg-white px-3 py-1.5 sm:px-5 sm:py-2.5 whitespace-nowrap">
                    {sessionRole === 'guest' ? 'Login' : sessionRole === 'company' ? '로그아웃' : 'Log Out'}
                  </Button>
               </div>
@@ -1246,13 +1353,15 @@
     );
 
     function App() {
-      const [sessionRole, setSessionRole] = useState(() => localStorage.getItem('expo_sessionRole') || null);
+      // 접속 시 기본 sessionRole을 'guest'로 설정하여 바로 대시보드가 뜨도록 변경
+      const [sessionRole, setSessionRole] = useState(() => localStorage.getItem('expo_sessionRole') || 'guest');
+      // 기본 sessionData도 guest Viewer 정보로 설정
       const [sessionData, setSessionData] = useState(() => {
         const saved = localStorage.getItem('expo_sessionData');
         if (saved) {
            try { return JSON.parse(saved); } catch(e) {}
         }
-        return null;
+        return { id: 'guest', name: 'Guest Viewer' };
       });
 
       useEffect(() => {
