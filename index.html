@@ -1168,23 +1168,8 @@
     const GuestDashboard = ({ data }) => {
       const { companies = [] } = data || {};
       const [selectedCompany, setSelectedCompany] = useState(null);
-      const [selectedCountryFilter, setSelectedCountryFilter] = useState('All');
 
-      // 기업의 고유 국가 목록 추출 (필터용)
-      const uniqueCountries = useMemo(() => {
-        const countries = companies.map(c => (c.country || '').trim() || '미입력');
-        const unique = [...new Set(countries)].sort();
-        return ['All', ...unique.filter(c => c !== '미입력'), ...(unique.includes('미입력') ? ['미입력'] : [])];
-      }, [companies]);
-
-      // 필터링된 참가 기업 목록
-      const filteredCompanies = useMemo(() => {
-        if (selectedCountryFilter === 'All') return companies;
-        return companies.filter(c => {
-            const country = (c.country || '').trim() || '미입력';
-            return country === selectedCountryFilter;
-        });
-      }, [companies, selectedCountryFilter]);
+      // 국가가 모두 한국이므로 불필요한 국가 필터링 로직 제거
 
       return (
         <div className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in space-y-8">
@@ -1241,35 +1226,15 @@
               <p className="text-gray-500 mt-2 font-medium">Discover premium green-bio and cosmetics companies from Korea.</p>
             </div>
 
-            {/* 기업 국가 필터 UI */}
-            <div className="mb-6 bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                <span className="text-sm font-extrabold text-gray-800 whitespace-nowrap flex items-center flex-shrink-0">
-                   <span className="mr-2 text-lg">🌍</span> 국가 필터:
-                </span>
-                <div className="flex flex-wrap gap-2">
-                    {uniqueCountries.map(country => (
-                        <button
-                            key={country}
-                            onClick={() => setSelectedCountryFilter(country)}
-                            className={`px-4 py-1.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
-                                selectedCountryFilter === country
-                                ? 'bg-gray-900 text-white shadow-md'
-                                : 'bg-gray-50 text-gray-600 border border-gray-200 hover:bg-gray-100 hover:text-gray-900'
-                            }`}
-                        >
-                            {country === 'All' ? '전체 보기' : country}
-                        </button>
-                    ))}
-                </div>
-            </div>
+            {/* 불필요해진 국가 필터 UI 제거됨 */}
 
-            {filteredCompanies.length === 0 ? (
+            {companies.length === 0 ? (
                 <div className="text-center py-16 bg-white rounded-2xl border border-gray-100">
-                    <p className="text-gray-500 font-medium text-lg">선택한 국가에 해당하는 기업이 없습니다.</p>
+                    <p className="text-gray-500 font-medium text-lg">등록된 기업이 없습니다.</p>
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8">
-                  {filteredCompanies.map(company => (
+                  {companies.map(company => (
                     <Card key={company.id} hover onClick={() => setSelectedCompany(company)} className="flex flex-col cursor-pointer border-t-4 border-t-blue-500 group">
                       <div className="h-32 sm:h-40 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 p-4 sm:p-6 relative">
                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
@@ -1278,8 +1243,9 @@
                       <div className="p-5 sm:p-6 flex-grow flex flex-col justify-between">
                          <div>
                             <h3 className="text-lg sm:text-xl font-extrabold text-gray-900 mb-1 line-clamp-1">{company.brandEn || company.nameEn}</h3>
-                            <p className="text-xs sm:text-sm font-medium text-gray-500 mb-3 sm:mb-4">{company.businessArea || 'Korea Brand'}</p>
-                            <p className="text-xs sm:text-sm font-medium text-gray-400 mb-3 sm:mb-4">국가: {company.country || '미입력'}</p>
+                            {company.businessArea && <p className="text-xs sm:text-sm font-medium text-gray-500 mb-2">{company.businessArea}</p>}
+                            {/* 회사 소개 2줄 노출 추가 */}
+                            <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 leading-relaxed mt-3">{company.introEn || 'No introduction provided.'}</p>
                          </div>
                          <div className="mt-4 pt-4 border-t border-gray-100 text-xs sm:text-sm font-bold text-blue-600 flex items-center justify-between">
                              View Profile <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
@@ -1291,7 +1257,6 @@
             )}
           </div>
 
-          {}
           <Modal isOpen={!!selectedCompany} onClose={() => setSelectedCompany(null)} title="Brand Profile">
             {selectedCompany && (
               <div className="space-y-6 sm:space-y-8 pb-4">
@@ -1304,8 +1269,8 @@
                          </a>
                       ) : <span className="text-gray-300 text-[10px] sm:text-xs uppercase font-bold tracking-widest text-center">No Logo</span>}
                    </div>
-                   <div className="text-center sm:text-left z-10 flex-grow w-full">
-                      <span className="inline-block px-2 py-1 bg-gray-100 text-gray-600 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-md mb-2 sm:mb-3">{selectedCompany.country || "Korea"}</span>
+                   <div className="text-center sm:text-left z-10 flex-grow w-full pt-2">
+                      {/* 상세 팝업에서도 국가(Korea) 표시 제거 */}
                       <h2 className="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 tracking-tight">{selectedCompany.brandEn}</h2>
                       <p className="text-sm sm:text-lg text-gray-500 font-medium">{selectedCompany.nameEn}</p>
                    </div>
@@ -1318,7 +1283,7 @@
                    </div>
                    <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
                       <p className="font-bold text-[10px] text-gray-500 uppercase tracking-wider mb-1">Website</p>
-                      <a href={selectedCompany.website} target="_blank" rel="noreferrer" className="font-bold text-blue-600 hover:underline text-sm break-all">{selectedCompany.website || "-"}</a>
+                      <a href={selectedCompany.website ? (selectedCompany.website.startsWith('http') ? selectedCompany.website : `https://${selectedCompany.website}`) : '#'} target="_blank" rel="noreferrer" className="font-bold text-blue-600 hover:underline text-sm break-all">{selectedCompany.website || "-"}</a>
                    </div>
                 </div>
 
