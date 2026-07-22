@@ -1160,7 +1160,79 @@
         </div>
       );
     };
+const GuestDashboard = ({ data }) => {
+      const { companies = [] } = data || {};
+      const [selectedCompany, setSelectedCompany] = useState(null);
 
+      return (
+        <div className="p-4 sm:p-6 max-w-7xl mx-auto animate-fade-in">
+          <div className="mb-8 text-center bg-white p-8 rounded-3xl border border-gray-100 shadow-sm">
+             <h1 className="text-3xl font-black text-gray-900 tracking-tight mb-2">ASEAN Korea Beauty Trade Show</h1>
+             <p className="text-gray-600 font-medium max-w-2xl mx-auto">Explore outstanding K-Beauty brands participating in our trade show. Register as a buyer to request 1:1 business meetings!</p>
+             <a href="https://forms.gle/4mxgkCsDCQoozqNN8" target="_blank" rel="noreferrer" className="inline-block mt-4 px-6 py-3 bg-[#FDB827] text-gray-900 font-extrabold rounded-xl shadow-lg hover:bg-amber-400 transition-all">
+                🚀 Register as Buyer Now
+             </a>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-8 animate-slide-up">
+            {companies.map(company => (
+              <Card key={company.loginId || company.id} hover onClick={() => setSelectedCompany(company)} className="flex flex-col overflow-hidden group cursor-pointer">
+                <div className="h-32 sm:h-40 bg-gray-50 flex items-center justify-center overflow-hidden border-b border-gray-100 p-4 sm:p-6 relative">
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors duration-300"></div>
+                  <DriveImage url={company.logoUrl} alt="Logo" className="object-contain h-full w-full mix-blend-multiply" fallbackText="No Logo" />
+                </div>
+                <div className="p-5 sm:p-6 flex-grow flex flex-col justify-between">
+                  <div>
+                    <h3 className="text-lg sm:text-xl font-extrabold text-gray-900 mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">{company.brandEn || company.nameEn}</h3>
+                    {company.businessArea && <p className="text-xs sm:text-sm font-medium text-gray-500 mb-2">{company.businessArea}</p>}
+                    <p className="text-xs sm:text-sm text-gray-600 line-clamp-2 leading-relaxed mt-3">{company.introEn || 'No introduction provided.'}</p>
+                  </div>
+                  <div className="mt-4 sm:mt-6 pt-4 border-t border-gray-100 text-xs sm:text-sm font-bold text-blue-600 flex items-center justify-between">
+                     View Profile
+                     <svg className="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+
+          <Modal isOpen={!!selectedCompany} onClose={() => setSelectedCompany(null)} title="Brand Profile">
+            {selectedCompany && (
+              <div className="space-y-6 sm:space-y-8 pb-4">
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 bg-white p-5 sm:p-6 rounded-2xl border border-gray-200 shadow-sm relative overflow-hidden">
+                   <div className="absolute top-0 right-0 w-24 h-24 sm:w-32 sm:h-32 bg-[#FDB827]/10 rounded-bl-full -z-10"></div>
+                   <div className="w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-xl border border-gray-100 shadow-sm flex items-center justify-center p-3 sm:p-4 flex-shrink-0 z-10">
+                      {selectedCompany.logoUrl ? (
+                         <a href={selectedCompany.logoUrl} target="_blank" rel="noreferrer" className="w-full h-full block flex items-center justify-center" title="원본 로고 파일 열기">
+                            <DriveImage url={selectedCompany.logoUrl} alt="logo" className="object-contain w-full h-full" fallbackText="Logo" />
+                         </a>
+                      ) : <span className="text-gray-300 text-[10px] sm:text-xs uppercase font-bold tracking-widest text-center">No Logo</span>}
+                   </div>
+                   <div className="text-center sm:text-left z-10 flex-grow w-full pt-2">
+                      <h2 className="text-2xl sm:text-4xl font-extrabold text-gray-900 mb-1 sm:mb-2 tracking-tight">{selectedCompany.brandEn}</h2>
+                      <p className="text-sm sm:text-lg text-gray-500 font-medium">{selectedCompany.nameEn}</p>
+                   </div>
+                </div>
+
+                <div>
+                  <h4 className="font-extrabold text-gray-900 text-lg mb-3">| Brand Intro</h4>
+                  <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-sm sm:text-base text-gray-700 font-medium whitespace-pre-wrap">{selectedCompany.introEn || "-"}</div>
+                </div>
+
+                <VideoPlayer url={selectedCompany.youtubeUrl} />
+
+                <div className="bg-amber-50 p-6 rounded-2xl text-center border border-amber-200 mt-6">
+                   <p className="font-bold text-gray-800 mb-3">Want to schedule a B2B meeting with {selectedCompany.brandEn}?</p>
+                   <a href="https://forms.gle/4mxgkCsDCQoozqNN8" target="_blank" rel="noreferrer" className="inline-block px-6 py-2.5 bg-[#FDB827] text-gray-900 font-bold rounded-xl shadow-md hover:bg-amber-400">
+                      Register as a Buyer
+                   </a>
+                </div>
+              </div>
+            )}
+          </Modal>
+        </div>
+      );
+    };
     const Layout = ({ sessionRole, setSessionRole, setSessionData, children }) => (
       <div className="min-h-screen bg-gray-50/50 flex flex-col font-sans selection:bg-[#FDB827] selection:text-black">
         <nav className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm backdrop-blur-md bg-white/90">
